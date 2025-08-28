@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mini-site com links e cadastro</title>
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    :root{
+      --bg:#f2f1f7; --card:#fff; --text:#1f1f29; --muted:#6b6b80;
+      --border:#e6e6f0; --shadow:0 8px 24px rgba(0,0,0,.08);
+      --radius:14px; --primary:#5a2ae6; --primary-700:#4a21c7;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial}
+    a{color:var(--primary);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;
+      gap:12px;padding:10px 16px;background:#0f1220;color:#fff;box-shadow:var(--shadow)}
+    .brand{font-weight:700}
+
+    #nav-toggle{display:none}
+    .menu-btn{display:none;margin-left:auto;background:#262940;color:#fff;border:1px solid #3a3d60;
+      padding:8px 10px;border-radius:10px;cursor:pointer;gap:8px;align-items:center}
+    .menu-btn i{margin-right:.5rem}
+
+    .nav{margin-left:auto;display:flex;gap:12px;align-items:center}
+    .nav a{color:#e9e9f6;padding:8px 10px;border-radius:10px}
+    .nav a:hover{background:rgba(255,255,255,.08)}
+    .nav .cta{background:var(--primary);color:#fff}
+    .nav .cta:hover{background:var(--primary-700)}
+
+    .container{max-width:980px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+      padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+    h1{margin:0 0 8px} h2{margin:16px 0 8px} p{color:var(--muted)}
+    .links-list{line-height:1.9}
+
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;
+      background:var(--primary);color:#fff;text-decoration:none;font-weight:600;box-shadow:var(--shadow)}
+    .btn:hover{background:var(--primary-700)}
+
+    .footer{text-align:center;padding:24px 16px;color:#8c8ca0}
+
+    .page{display:none}
+    #cadastro:target{display:block}
+    #home{display:block}       
+    #cadastro:target ~ #home{display:none}  
+
+    .form{width:min(560px,92vw);margin-inline:auto}
+    .form h1{text-align:center;margin-bottom:16px}
+    .input-group{display:flex;align-items:center;gap:10px;background:#f8f8ff;
+      border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:12px}
+    .input-group .icon{width:22px;text-align:center;color:#666}
+    .input-group input{flex:1;border:none;outline:none;background:transparent;font-size:16px;padding:8px 4px}
+    .form-actions{display:flex;gap:12px;align-items:center;margin-top:8px}
+    .link-back{color:#6b6b80}
+
+    @media (max-width:600px){
+      .nav{display:none;position:absolute;right:16px;top:52px;flex-direction:column;
+           background:#0f1220;padding:8px;border-radius:12px;border:1px solid #2c2f4a}
+      #nav-toggle:checked ~ .nav{display:flex}
+      .menu-btn{display:inline-flex}
+      .nav a{display:block;width:100%}
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">Marca</div>
+
+    <input type="checkbox" id="nav-toggle" aria-label="Abrir menu">
+    <label for="nav-toggle" class="menu-btn"><i class="fa-solid fa-bars"></i> Menu</label>
+
+    <nav class="nav" aria-label="Principal">
+      <a href="#home">Início</a>
+      <a href="#links">Links</a>
+      <a href="#contato">Contato</a>
+      <a class="cta" href="#cadastro">Criar conta</a>
+    </nav>
+  </header>
+
+  <main id="cadastro" class="page container">
+    <form class="card form" action="#" method="post">
+      <h1>Faça o seu cadastro!</h1>
+
+      <label class="input-group">
+        <span class="icon"><i class="fa-solid fa-user"></i></span>
+        <input type="text" name="nome" placeholder="Nome" required>
+      </label>
+
+      <label class="input-group">
+        <span class="icon"><i class="fa-solid fa-lock"></i></span>
+        <input type="password" name="senha" placeholder="Senha" required>
+      </label>
+
+      <label class="input-group">
+        <span class="icon"><i class="fa-solid fa-calendar-days"></i></span>
+        <input type="date" name="data de nascimento" placeholder="Data de nascimento" required>
+      </label>
+
+      <div class="form-actions">
+        <button type="submit" class="btn"><i class="fa-solid fa-plus"></i> Cadastrar</button>
+        <a class="link-back" href="#home">Voltar</a>
+      </div>
+    </form>
+  </main>
+
+  <main id="home" class="page container">
+    <section class="card">
+      <h1>Exercício: Links + Layout Responsivo</h1>
+        <p>Estreite a janela (≤600px) para ver o menu virar hambúrguer.</p>
+
+      <h2 id="links">Links a serem testados</h2>
+      <ul class="links-list">
+        <li>Interno (âncora na mesma página): <a href="#contato">Ir para Contato</a></li>
+        <li>“Outra página” do site (simulada): <a href="#cadastro">/cadastrar.html</a></li>
+        <li>Externo com target: <a href="https://www.pucpr.br/" target="_blank" rel="noopener">PUCPR</a></li>
+        <li>E-mail: <a href="mailto:exemplo@email.com">seuemail@exexmpli.com</a></li>
+        <li>Telefone: <a href="tel:+5541999999999">+55 (41) 99999-9999</a></li>
+        <li>WhatsApp: <a href="https://wa.me/5541999999999" target="_blank" rel="noopener">Chamar no Whats</a></li>
+      </ul>
+
+      <div class="actions">
+        <a class="btn" href="#cadastro"><i class="fa-solid fa-user-plus"></i> Criar conta</a>
+      </div>
+    </section>
+
+    <section id="contato" class="card">
+      <h2>Contato</h2>
+      <p>Envie dúvidas por e-mail ou WhatsApp (links acima).</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>©️ 2025 · Direitos reservados: Matheus Murbach, Francisco, João Alves, Arthur Moura e Guilherme Mendonça</small>
+  </footer>
+</body>
+</html>

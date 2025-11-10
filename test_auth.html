@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de API - Auth</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f7;
+        }
+        .test-box {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #0071e3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0077ed;
+        }
+        .result {
+            background: #f5f5f7;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success { color: #34c759; }
+        .error { color: #ff3b30; }
+        h2 { margin-top: 0; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Teste de API - Autenticação</h1>
+    
+    <div class="test-box">
+        <h2>1. Testar Registro</h2>
+        <button onclick="testRegister()">Criar Conta de Teste</button>
+        <div id="register-result" class="result"></div>
+    </div>
+    
+    <div class="test-box">
+        <h2>2. Testar Login</h2>
+        <button onclick="testLogin()">Fazer Login</button>
+        <div id="login-result" class="result"></div>
+    </div>
+    
+    <div class="test-box">
+        <h2>3. Verificar Sessão</h2>
+        <button onclick="testCheck()">Verificar Sessão Atual</button>
+        <div id="check-result" class="result"></div>
+    </div>
+    
+    <div class="test-box">
+        <h2>4. Testar Logout</h2>
+        <button onclick="testLogout()">Fazer Logout</button>
+        <div id="logout-result" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'api';
+
+        async function testRegister() {
+            const result = document.getElementById('register-result');
+            result.textContent = 'Testando registro...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth.php?action=register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'Teste Usuario ' + Date.now(),
+                        email: 'teste' + Date.now() + '@example.com',
+                        password: '123456',
+                        role: 'user'
+                    }),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                result.innerHTML = `<span class="${response.ok ? 'success' : 'error'}">
+Status: ${response.status}
+${JSON.stringify(data, null, 2)}</span>`;
+            } catch (error) {
+                result.innerHTML = `<span class="error">ERRO: ${error.message}</span>`;
+            }
+        }
+
+        async function testLogin() {
+            const result = document.getElementById('login-result');
+            result.textContent = 'Testando login...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth.php?action=login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'joao@email.com',
+                        password: 'user123'
+                    }),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                result.innerHTML = `<span class="${response.ok ? 'success' : 'error'}">
+Status: ${response.status}
+${JSON.stringify(data, null, 2)}</span>`;
+            } catch (error) {
+                result.innerHTML = `<span class="error">ERRO: ${error.message}</span>`;
+            }
+        }
+
+        async function testCheck() {
+            const result = document.getElementById('check-result');
+            result.textContent = 'Verificando sessão...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth.php?action=check`, {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                result.innerHTML = `<span class="${response.ok ? 'success' : 'error'}">
+Status: ${response.status}
+${JSON.stringify(data, null, 2)}</span>`;
+            } catch (error) {
+                result.innerHTML = `<span class="error">ERRO: ${error.message}</span>`;
+            }
+        }
+
+        async function testLogout() {
+            const result = document.getElementById('logout-result');
+            result.textContent = 'Fazendo logout...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth.php?action=logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                result.innerHTML = `<span class="${response.ok ? 'success' : 'error'}">
+Status: ${response.status}
+${JSON.stringify(data, null, 2)}</span>`;
+            } catch (error) {
+                result.innerHTML = `<span class="error">ERRO: ${error.message}</span>`;
+            }
+        }
+
+        // Testa automaticamente ao carregar
+        window.onload = () => {
+            testCheck();
+        };
+    </script>
+</body>
+</html>

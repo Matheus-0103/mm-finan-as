@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Conexão - MM Finanças</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .test-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .test-item h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .status.loading {
+            background: #ffc107;
+            color: #000;
+        }
+        .status.success {
+            background: #28a745;
+            color: white;
+        }
+        .status.error {
+            background: #dc3545;
+            color: white;
+        }
+        .info {
+            background: #e7f3ff;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .info h3 {
+            color: #2196f3;
+            margin-bottom: 10px;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Teste de Conexão</h1>
+        
+        <div class="test-item">
+            <h3>1. Servidor Apache</h3>
+            <div id="apache-status" class="status loading">Testando...</div>
+            <div id="apache-info"></div>
+        </div>
+        
+        <div class="test-item">
+            <h3>2. API Básica</h3>
+            <div id="api-status" class="status loading">Testando...</div>
+            <div id="api-info"></div>
+        </div>
+        
+        <div class="test-item">
+            <h3>3. Conexão com Banco de Dados</h3>
+            <div id="db-status" class="status loading">Testando...</div>
+            <div id="db-info"></div>
+        </div>
+        
+        <div class="test-item">
+            <h3>4. API de Categorias</h3>
+            <div id="categories-status" class="status loading">Testando...</div>
+            <div id="categories-info"></div>
+        </div>
+        
+        <button onclick="runTests()">🔄 Testar Novamente</button>
+        
+        <div class="info">
+            <h3>ℹ️ Informações</h3>
+            <p><strong>URL Base:</strong> <span id="base-url"></span></p>
+            <p><strong>Horário:</strong> <span id="timestamp"></span></p>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = window.location.origin + window.location.pathname.replace('test_api.html', '');
+        document.getElementById('base-url').textContent = baseUrl;
+        document.getElementById('timestamp').textContent = new Date().toLocaleString('pt-BR');
+
+        async function testEndpoint(url, description) {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                return {
+                    success: response.ok,
+                    status: response.status,
+                    data: data
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+
+        async function runTests() {
+            document.getElementById('timestamp').textContent = new Date().toLocaleString('pt-BR');
+            
+            // Reset status
+            document.querySelectorAll('.status').forEach(el => {
+                el.className = 'status loading';
+                el.textContent = 'Testando...';
+            });
+            
+            // Teste 1: Apache
+            const apacheStatus = document.getElementById('apache-status');
+            const apacheInfo = document.getElementById('apache-info');
+            apacheStatus.textContent = '✓ Apache rodando';
+            apacheStatus.className = 'status success';
+            apacheInfo.innerHTML = '<small>Porta: 80 ou 443</small>';
+            
+            // Teste 2: API Básica
+            const apiTest = await testEndpoint(baseUrl + 'test_api.php', 'API Básica');
+            const apiStatus = document.getElementById('api-status');
+            const apiInfo = document.getElementById('api-info');
+            
+            if (apiTest.success) {
+                apiStatus.textContent = '✓ API funcionando';
+                apiStatus.className = 'status success';
+                apiInfo.innerHTML = `<pre>${JSON.stringify(apiTest.data, null, 2)}</pre>`;
+            } else {
+                apiStatus.textContent = '✗ Erro na API';
+                apiStatus.className = 'status error';
+                apiInfo.innerHTML = `<small style="color: #dc3545">${apiTest.error}</small>`;
+            }
+            
+            // Teste 3: Banco de Dados
+            const dbTest = await testEndpoint(baseUrl + 'test_connection.php', 'Banco de Dados');
+            const dbStatus = document.getElementById('db-status');
+            const dbInfo = document.getElementById('db-info');
+            
+            if (dbTest.success && dbTest.data) {
+                if (dbTest.data.status === 'success') {
+                    dbStatus.textContent = '✓ Banco conectado';
+                    dbStatus.className = 'status success';
+                    const tables = dbTest.data.details.find(d => d.tables);
+                    if (tables) {
+                        dbInfo.innerHTML = `<small>${tables.count} tabelas encontradas</small>`;
+                    } else {
+                        dbInfo.innerHTML = '<small>MySQL rodando corretamente</small>';
+                    }
+                } else if (dbTest.data.status === 'warning') {
+                    dbStatus.textContent = '⚠ ' + dbTest.data.message;
+                    dbStatus.className = 'status';
+                    dbStatus.style.background = '#ffc107';
+                    dbInfo.innerHTML = `<small>${dbTest.data.solution || ''}</small>`;
+                } else {
+                    dbStatus.textContent = '✗ Erro no banco';
+                    dbStatus.className = 'status error';
+                    dbInfo.innerHTML = `<small style="color: #dc3545">${dbTest.data.message}<br>${dbTest.data.solution || ''}</small>`;
+                }
+            } else {
+                dbStatus.textContent = '✗ Erro no banco';
+                dbStatus.className = 'status error';
+                dbInfo.innerHTML = `<small style="color: #dc3545">${dbTest.error || 'Erro desconhecido'}</small>`;
+            }
+            
+            // Teste 4: API Categorias (sem auth)
+            const categoriesTest = await testEndpoint(baseUrl + 'api/categories.php', 'Categorias');
+            const categoriesStatus = document.getElementById('categories-status');
+            const categoriesInfo = document.getElementById('categories-info');
+            
+            if (categoriesTest.success) {
+                categoriesStatus.textContent = '✓ API Categorias OK';
+                categoriesStatus.className = 'status success';
+                const count = categoriesTest.data.length || 0;
+                categoriesInfo.innerHTML = `<small>${count} categorias disponíveis</small>`;
+            } else if (categoriesTest.status === 401) {
+                categoriesStatus.textContent = '⚠ Requer autenticação';
+                categoriesStatus.className = 'status' ;
+                categoriesStatus.style.background = '#ffc107';
+                categoriesInfo.innerHTML = '<small>API funcionando, mas requer login</small>';
+            } else {
+                categoriesStatus.textContent = '✗ Erro na API';
+                categoriesStatus.className = 'status error';
+                categoriesInfo.innerHTML = `<small style="color: #dc3545">${categoriesTest.error || JSON.stringify(categoriesTest.data)}</small>`;
+            }
+        }
+
+        // Executa testes ao carregar
+        runTests();
+    </script>
+</body>
+</html>

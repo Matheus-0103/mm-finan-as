@@ -1,146 +1,3022 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mini-site com links e cadastro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MM Finanças - Gestão Financeira Profissional</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+        :root {
+            --primary: #000;
+            --secondary: #1d1d1f;
+            --accent: #0071e3;
+            --accent-hover: #0077ed;
+            --text: #1d1d1f;
+            --text-secondary: #86868b;
+            --bg: #fff;
+            --bg-secondary: #f5f5f7;
+            --border: #d2d2d7;
+            --success: #34c759;
+            --danger: #ff3b30;
+            --radius: 18px;
+            --radius-sm: 12px;
+        }
 
-  <style>
-    :root{
-      --bg:#f2f1f7; --card:#fff; --text:#1f1f29; --muted:#6b6b80;
-      --border:#e6e6f0; --shadow:0 8px 24px rgba(0,0,0,.08);
-      --radius:14px; --primary:#5a2ae6; --primary-700:#4a21c7;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
-      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial}
-    a{color:var(--primary);text-decoration:none}
-    a:hover{text-decoration:underline}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.47059;
+            font-weight: 400;
+            letter-spacing: -0.022em;
+            color: var(--text);
+            background: var(--bg);
+        }
 
-    .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;
-      gap:12px;padding:10px 16px;background:#0f1220;color:#fff;box-shadow:var(--shadow)}
-    .brand{font-weight:700}
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
 
-    #nav-toggle{display:none}
-    .menu-btn{display:none;margin-left:auto;background:#262940;color:#fff;border:1px solid #3a3d60;
-      padding:8px 10px;border-radius:10px;cursor:pointer;gap:8px;align-items:center}
-    .menu-btn i{margin-right:.5rem}
+        nav {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0 22px;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .nav{margin-left:auto;display:flex;gap:12px;align-items:center}
-    .nav a{color:#e9e9f6;padding:8px 10px;border-radius:10px}
-    .nav a:hover{background:rgba(255,255,255,.08)}
-    .nav .cta{background:var(--primary);color:#fff}
-    .nav .cta:hover{background:var(--primary-700)}
+        .logo {
+            font-size: 21px;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0;
+        }
 
-    .container{max-width:980px;margin:24px auto;padding:0 16px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-      padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
-    h1{margin:0 0 8px} h2{margin:16px 0 8px} p{color:var(--muted)}
-    .links-list{line-height:1.9}
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
 
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;
-      background:var(--primary);color:#fff;text-decoration:none;font-weight:600;box-shadow:var(--shadow)}
-    .btn:hover{background:var(--primary-700)}
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 400;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
 
-    .footer{text-align:center;padding:24px 16px;color:#8c8ca0}
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
 
-    .page{display:none}
-    #cadastro:target{display:block}
-    #home{display:block}       
-    #cadastro:target ~ #home{display:none}  
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
 
-    .form{width:min(560px,92vw);margin-inline:auto}
-    .form h1{text-align:center;margin-bottom:16px}
-    .input-group{display:flex;align-items:center;gap:10px;background:#f8f8ff;
-      border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:12px}
-    .input-group .icon{width:22px;text-align:center;color:#666}
-    .input-group input{flex:1;border:none;outline:none;background:transparent;font-size:16px;padding:8px 4px}
-    .form-actions{display:flex;gap:12px;align-items:center;margin-top:8px}
-    .link-back{color:#6b6b80}
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--border);
+        }
 
-    @media (max-width:600px){
-      .nav{display:none;position:absolute;right:16px;top:52px;flex-direction:column;
-           background:#0f1220;padding:8px;border-radius:12px;border:1px solid #2c2f4a}
-      #nav-toggle:checked ~ .nav{display:flex}
-      .menu-btn{display:inline-flex}
-      .nav a{display:block;width:100%}
-    }
-  </style>
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-sm {
+            padding: 6px 16px;
+            font-size: 12px;
+        }
+
+        /* Feedback Cards */
+        .feedback-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .feedback-message {
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        /* Client Selector */
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .client-selector {
+            position: relative;
+        }
+
+        .client-selector select {
+            appearance: none;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 36px 8px 12px;
+            font-size: 14px;
+            color: var(--text);
+            cursor: pointer;
+            min-width: 200px;
+        }
+
+        .client-selector::after {
+            content: "▼";
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 120px 22px 60px;
+            text-align: center;
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            line-height: 1.07143;
+            font-weight: 600;
+            letter-spacing: -0.005em;
+            margin-bottom: 6px;
+        }
+
+        .hero p {
+            font-size: 28px;
+            line-height: 1.14286;
+            font-weight: 400;
+            letter-spacing: 0.007em;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Sections */
+        section {
+            padding: 60px 22px;
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 48px;
+            line-height: 1.08349;
+            font-weight: 600;
+            letter-spacing: -0.003em;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--bg);
+            border-radius: var(--radius);
+            padding: 40px;
+            border: 1px solid var(--border);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 17px;
+            line-height: 1.47059;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+            padding-top: 64px;
+            background: var(--bg);
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 22px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            width: 100%;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 24px 0;
+        }
+
+        .dashboard-header h1 {
+            font-size: 40px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .dashboard-header .btn {
+            margin-left: auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg);
+            border-radius: var(--radius);
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Tables */
+        .table-container {
+            background: var(--bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: var(--bg-secondary);
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg);
+            border-radius: var(--radius);
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .form-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-tab {
+            padding: 8px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 16px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .form-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .form-content {
+            display: none;
+        }
+
+        .form-content.active {
+            display: block;
+        }
+
+        .close-modal {
+            font-size: 32px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            border: none;
+            background: none;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-tab {
+            padding: 12px 0;
+            border: none;
+            background: none;
+            font-size: 17px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+
+        .form-tab.active {
+            color: var(--text);
+            border-bottom-color: var(--accent);
+        }
+
+        .form-content {
+            display: none;
+        }
+
+        .form-content.active {
+            display: block;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 16px 20px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d1f2eb;
+            color: #0f5132;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            font-size: 17px;
+            margin-bottom: 20px;
+        }
+
+        /* Client Card */
+        .client-card {
+            background: var(--bg);
+            border-radius: var(--radius);
+            padding: 24px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .client-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .client-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .client-name {
+            font-size: 21px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .client-email {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .client-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .client-stat {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .client-stat strong {
+            display: block;
+            font-size: 19px;
+            color: var(--text);
+            margin-top: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 734px) {
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .hero p {
+                font-size: 21px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .dashboard-header h1 {
+                font-size: 32px;
+            }
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--bg-secondary);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar select,
+        .filter-bar input {
+            flex: 1;
+            min-width: 200px;
+        }
+        /* botões visíveis apenas quando usuário autenticado */
+        .private-action { display: none; }
+    </style>
 </head>
+
 <body>
+    <header>
+        <nav>
+            <div class="logo">MM Finanças</div>
+            <div class="nav-actions">
+                <button class="btn private-action" onclick="showMonthlyReportModal()" title="Relatório Mensal">Relatório</button>
+                <button class="btn private-action" onclick="showImportExportModal()" title="Importar/Exportar">Import/Export</button>
+                <button class="btn private-action" onclick="showGroupsModal()" title="Gerenciar Grupos">Grupos</button>
+                <button class="btn private-action" onclick="showNotificationsModal()" title="Notificações">Notificações</button>
+                <button class="btn private-action" onclick="showSettingsModal()" title="Configurações">Configurações</button>
+                <button class="btn btn-primary" id="authBtn" onclick="showAuthModal()">Entrar</button>
+            </div>
+        </nav>
+    </header>
 
-  <header class="topbar">
-    <div class="brand">Marca</div>
+    <!-- Landing Page -->
+    <div id="landing">
+        <section class="hero">
+            <h1>Gestão financeira familiar profissional</h1>
+            <p>Controle suas finanças com a mesma simplicidade e elegância que você espera</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="showAuthModal('register')">Começar agora</button>
+                <button class="btn btn-secondary" onclick="showAuthModal('login')">Já tenho conta</button>
+            </div>
+        </section>
 
-    <input type="checkbox" id="nav-toggle" aria-label="Abrir menu">
-    <label for="nav-toggle" class="menu-btn"><i class="fa-solid fa-bars"></i> Menu</label>
+        <section>
+            <h2 class="section-title">Feito para você</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h3>Insights claros</h3>
+                    <p>Visualize seus gastos por categoria com gráficos intuitivos e relatórios detalhados.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">👨‍👩‍👧‍👦</div>
+                    <h3>Gestão familiar</h3>
+                    <p>Organize as finanças de toda a família em um só lugar com controle individual.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">💡</div>
+                    <h3>Orientação especializada</h3>
+                    <p>Receba feedbacks personalizados de gestores financeiros qualificados.</p>
+                </div>
+            </div>
+        </section>
+    </div>
 
-    <nav class="nav" aria-label="Principal">
-      <a href="#home">Início</a>
-      <a href="#links">Links</a>
-      <a href="#contato">Contato</a>
-      <a class="cta" href="#cadastro">Criar conta</a>
-    </nav>
-  </header>
+    <!-- Dashboard do Usuário -->
+    <div id="userDashboard" class="dashboard">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h1>Olá, <span id="userName"></span></h1>
+                <button class="btn btn-secondary" onclick="logout()">Sair</button>
+            </div>
 
-  <main id="cadastro" class="page container">
-    <form class="card form" action="#" method="post">
-      <h1>Faça o seu cadastro!</h1>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Gastos este mês</div>
+                    <div class="stat-value" id="totalMonth">R$ 0,00</div>
+                    <div class="stat-change" id="monthComparison">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total de despesas</div>
+                    <div class="stat-value" id="totalAccounts">0</div>
+                    <div class="stat-change">Registradas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Categoria principal</div>
+                    <div class="stat-value" id="topCategory">—</div>
+                    <div class="stat-change" id="categoryValue">R$ 0,00</div>
+                </div>
+            </div>
 
-      <label class="input-group">
-        <span class="icon"><i class="fa-solid fa-user"></i></span>
-        <input type="text" name="nome" placeholder="Nome" required>
-      </label>
+            <div class="table-container" style="margin-bottom: 30px;">
+                <div
+                    style="padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="font-size: 21px; font-weight: 600;">Minhas Despesas</h3>
+                    <button class="btn btn-primary btn-sm" onclick="showAddAccountModal()">Nova Despesa</button>
+                </div>
+                <div id="loadingAccounts"
+                    style="display: none; padding: 40px; justify-content: center; align-items: center;">
+                    <div class="loading-spinner"></div>
+                    <span style="margin-left: 12px;">Carregando despesas...</span>
+                </div>
+                <div class="filter-bar" style="padding: 20px; border-bottom: 1px solid var(--border);">
+                    <select id="filterCategory" onchange="loadUserAccounts()">
+                        <option value="">Todas as categorias</option>
+                    </select>
+                    <input type="month" id="filterMonth" onchange="loadUserAccounts()">
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Categoria</th>
+                            <th>Descrição</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accountsTableBody">
+                        <tr>
+                            <td colspan="5" class="loading">
+                                <div class="spinner"></div>Carregando...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-      <label class="input-group">
-        <span class="icon"><i class="fa-solid fa-lock"></i></span>
-        <input type="password" name="senha" placeholder="Senha" required>
-      </label>
+            <div class="table-container">
+                <div style="padding: 24px; border-bottom: 1px solid var(--border);">
+                    <h3 style="font-size: 21px; font-weight: 600;">Gráfico Mensal</h3>
+                </div>
+                <div style="padding: 24px;">
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
-      <label class="input-group">
-        <span class="icon"><i class="fa-solid fa-calendar-days"></i></span>
-        <input type="date" name="data de nascimento" placeholder="Data de nascimento" required>
-      </label>
+            <div class="table-container" style="margin-top: 30px;" id="feedbacksContainer">
+                <div style="padding: 24px; border-bottom: 1px solid var(--border);">
+                    <h3 style="font-size: 21px; font-weight: 600;">Feedbacks do Gestor</h3>
+                </div>
+                <div id="loadingFeedbacks"
+                    style="display: none; padding: 40px; justify-content: center; align-items: center;">
+                    <div class="loading-spinner"></div>
+                    <span style="margin-left: 12px;">Carregando feedbacks...</span>
+                </div>
+                <div id="feedbacksList" style="padding: 24px;"></div>
+            </div>
+        </div>
+    </div>
 
-      <div class="form-actions">
-        <button type="submit" class="btn"><i class="fa-solid fa-plus"></i> Cadastrar</button>
-        <a class="link-back" href="#home">Voltar</a>
-      </div>
-    </form>
-  </main>
+    <!-- Dashboard do Gestor -->
+    <div id="managerDashboard" class="dashboard">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <div class="header-content">
+                    <h1>Painel do Gestor</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="showCreateClientModal()">+ Novo Cliente</button>
+                        <div class="client-selector">
+                            <select id="clientSelector" onchange="handleClientChange(this.value)">
+                                <option value="">Selecione um cliente</option>
+                            </select>
+                        </div>
+                        <button id="logoutBtn" class="btn btn-secondary" onclick="logout()">Sair</button>
+                    </div>
+                </div>
+            </div>
 
-  <main id="home" class="page container">
-    <section class="card">
-      <h1>Exercício: Links + Layout Responsivo</h1>
-        <p>Estreite a janela (≤600px) para ver o menu virar hambúrguer.</p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total de Clientes</div>
+                    <div class="stat-value" id="totalClients">0</div>
+                    <div class="stat-change">Ativos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Despesas Registradas</div>
+                    <div class="stat-value" id="totalAccountsManager">0</div>
+                    <div class="stat-change">Total geral</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Volume Total</div>
+                    <div class="stat-value" id="totalVolumeManager">R$ 0,00</div>
+                    <div class="stat-change">Todos os clientes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Feedbacks Enviados</div>
+                    <div class="stat-value" id="totalFeedbacksManager">0</div>
+                    <div class="stat-change">Total</div>
+                </div>
+            </div>
 
-      <h2 id="links">Links a serem testados</h2>
-      <ul class="links-list">
-        <li>Interno (âncora na mesma página): <a href="#contato">Ir para Contato</a></li>
-        <li>“Outra página” do site (simulada): <a href="#cadastro">/cadastrar.html</a></li>
-        <li>Externo com target: <a href="https://www.pucpr.br/" target="_blank" rel="noopener">PUCPR</a></li>
-        <li>E-mail: <a href="mailto:exemplo@email.com">seuemail@exexmpli.com</a></li>
-        <li>Telefone: <a href="tel:+5541999999999">+55 (41) 99999-9999</a></li>
-        <li>WhatsApp: <a href="https://wa.me/5541999999999" target="_blank" rel="noopener">Chamar no Whats</a></li>
-      </ul>
+            <div id="noClientSelected" class="empty-state" style="text-align: center; padding: 40px;">
+                <div style="font-size: 48px; margin-bottom: 16px;">👆</div>
+                <h3 style="margin-bottom: 8px;">Selecione um Cliente</h3>
+                <p style="color: var(--text-secondary);">Escolha um cliente no seletor acima para visualizar seus dados
+                </p>
+            </div>
 
-      <div class="actions">
-        <a class="btn" href="#cadastro"><i class="fa-solid fa-user-plus"></i> Criar conta</a>
-      </div>
-    </section>
+            <div id="clientContent" style="display: none;">
+                <div class="section-header">
+                    <h2 id="selectedClientName" style="font-size: 24px; margin-bottom: 24px;"></h2>
+                </div>
 
-    <section id="contato" class="card">
-      <h2>Contato</h2>
-      <p>Envie dúvidas por e-mail ou WhatsApp (links acima).</p>
-    </section>
-  </main>
+                <div class="table-container">
+                    <div class="section-header" style="padding: 24px; border-bottom: 1px solid var(--border);">
+                        <h3>Histórico de Despesas</h3>
+                    </div>
+                    <div class="table-responsive" style="padding: 24px;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Categoria</th>
+                                    <th>Valor</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientAccountsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
 
+                <div class="table-container" style="margin-top: 30px;">
+                    <div class="section-header" style="padding: 24px; border-bottom: 1px solid var(--border);">
+                        <h3>Enviar Feedback</h3>
+                    </div>
+                    <div style="padding: 24px;">
+                        <form onsubmit="handleSendFeedback(event)" id="feedbackForm1">
+                            <input type="hidden" id="currentClientId1">
+                            <textarea id="feedbackMessage1" rows="4" required placeholder="Digite seu feedback para o cliente"></textarea>
+                            <button type="submit" class="btn btn-primary">Enviar Feedback</button>
+                        </form>
+                    </div>
+                </div>
 
-  <footer class="footer">
-    <small>©️ 2025 · Direitos reservados: Matheus Murbach, Francisco, João Alves, Arthur Moura e Guilherme Mendonça</small>
-  </footer>
+                <div class="table-container" style="margin-top: 30px;">
+                    <div class="section-header" style="padding: 24px; border-bottom: 1px solid var(--border);">
+                        <h3>Histórico de Feedbacks</h3>
+                    </div>
+                    <div id="clientFeedbacksList" style="padding: 24px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Página de Detalhes do Cliente -->
+    <div id="clientDetailsPage" class="dashboard" style="display: none;">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <button class="btn btn-secondary" onclick="backToManagerDashboard()">
+                        <span style="margin-right: 8px;">←</span> Voltar
+                    </button>
+                    <h1 id="clientDetailsName">Nome do Cliente</h1>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total de Despesas</div>
+                    <div class="stat-value" id="clientTotalAccounts">0</div>
+                    <div class="stat-change">Registros</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Volume Total</div>
+                    <div class="stat-value" id="clientTotalVolume">R$ 0,00</div>
+                    <div class="stat-change">Em despesas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Categoria Principal</div>
+                    <div class="stat-value" id="clientMainCategory">-</div>
+                    <div class="stat-change">Maior gasto</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Feedbacks</div>
+                    <div class="stat-value" id="clientTotalFeedbacks">0</div>
+                    <div class="stat-change">Enviados</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div style="padding: 24px; border-bottom: 1px solid var(--border);">
+                    <h3 style="font-size: 21px; font-weight: 600;">Histórico de Despesas</h3>
+                </div>
+                <div class="table-responsive" style="padding: 24px;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Categoria</th>
+                                <th>Valor</th>
+                                <th>Descrição</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientAccountsTableBody">
+                            <!-- Client accounts will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container" style="margin-top: 30px;">
+                <div style="padding: 24px; border-bottom: 1px solid var(--border);">
+                    <h3 style="font-size: 21px; font-weight: 600;">Enviar Feedback</h3>
+                </div>
+                <div style="padding: 24px;">
+                    <form onsubmit="handleSendFeedback(event)" id="feedbackForm2">
+                        <input type="hidden" id="currentClientId2">
+                        <textarea id="feedbackMessage2" rows="4" required placeholder="Digite seu feedback para o cliente"></textarea>
+                        <button type="submit" class="btn btn-primary">Enviar Feedback</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="table-container" style="margin-top: 30px;">
+                <div style="padding: 24px; border-bottom: 1px solid var(--border);">
+                    <h3 style="font-size: 21px; font-weight: 600;">Histórico de Feedbacks</h3>
+                </div>
+                <div id="clientFeedbacksList" style="padding: 24px;">
+                    <!-- Feedbacks will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cliente Detalhes -->
+    <div id="clientDetailsModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2 id="clientDetailsName">Cliente</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="clientDetailsContent"></div>
+        </div>
+    </div>
+
+    <!-- Modal Auth -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Acesse sua conta</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <div class="form-tabs">
+                <button class="form-tab active" onclick="switchAuthTab('login')">Login</button>
+                <button class="form-tab" onclick="switchAuthTab('register')">Registrar</button>
+            </div>
+
+            <div id="loginForm" class="form-content active">
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" required placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" id="loginPassword" required placeholder="Digite sua senha">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+                </form>
+            </div>
+
+            <div id="registerForm" class="form-content">
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="registerName" required placeholder="Seu nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="registerEmail" required placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" id="registerPassword" required placeholder="Digite sua senha">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Conta</label>
+                        <select id="registerRole" required>
+                            <option value="">Selecione o tipo de conta</option>
+                            <option value="manager">Gestor Financeiro</option>
+                            <option value="user">Cliente</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Criar Conta</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Add Account -->
+    <div id="accountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nova Despesa</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <form onsubmit="handleAddAccount(event)">
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="accountCategory" required>
+                        <option value="">Selecione uma categoria</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" id="accountValue" required step="0.01" placeholder="0,00">
+                </div>
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="accountDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="accountDescription" rows="3" placeholder="Detalhes da despesa (opcional)"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Salvar Despesa</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Send Feedback -->
+    <div id="feedbackModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Enviar Feedback</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <form onsubmit="handleSendFeedback(event)">
+                <input type="hidden" id="feedbackUserId">
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <input type="text" id="feedbackClientName" readonly style="background: var(--bg-secondary);">
+                </div>
+                <div class="form-group">
+                    <label>Mensagem</label>
+                    <textarea id="feedbackMessage3" rows="6" required placeholder="Escreva seu feedback sobre as finanças do cliente..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar Feedback</button>
+            </form>
+        </div>
+    </div>
+ 
+    <!-- Novas Janelas -->
+    <!-- Modal Relatório Mensal -->
+    <div id="monthlyReportModal" class="modal">
+        <div class="modal-content" style="max-width:900px;">
+            <div class="modal-header">
+                <h2>Relatório Mensal</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div style="padding:24px;">
+                <div style="display:flex;gap:16px;align-items:center;">
+                    <label>Mês</label>
+                    <input type="month" id="reportMonth" value="">
+                    <button class="btn btn-primary" onclick="generateMonthlyReport()">Gerar</button>
+                </div>
+                <div id="monthlyReportContent" style="margin-top:16px;">
+                    <!-- Conteúdo do relatório (totais, gráfico) -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Importar/Exportar CSV -->
+    <div id="importExportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Importar / Exportar</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div style="padding:24px;">
+                <div class="form-group">
+                    <label>Importar CSV</label>
+                    <input type="file" id="importFile" accept=".csv">
+                    <button class="btn" onclick="handleImportCSV()">Importar</button>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label>Exportar contas (CSV)</label>
+                    <button class="btn btn-primary" onclick="exportAccountsCSV()">Exportar</button>
+                </div>
+                <div id="importExportResult" style="margin-top:12px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Gerenciar Grupos -->
+    <div id="groupsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Gerenciar Grupos</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div style="padding:24px;">
+                <form onsubmit="handleCreateGroup(event)">
+                    <div class="form-group">
+                        <label>Nome do Grupo</label>
+                        <input type="text" id="newGroupName" required placeholder="Ex: Família">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Criar Grupo</button>
+                </form>
+                <div style="margin-top:16px;">
+                    <h4>Grupos existentes</h4>
+                    <ul id="groupsList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Configurações da Conta -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Configurações da Conta</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div style="padding:24px;">
+                <div id="settingsAlert" class="alert" style="display:none;"></div>
+                <!-- Formulário de atualização -->
+                <div id="settingsForm">
+                    <form onsubmit="handleUpdateAccount(event)">
+                        <div class="form-group">
+                            <label>Nome</label>
+                            <input type="text" id="settingsName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="settingsEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nova Senha (opcional)</label>
+                            <input type="password" id="settingsPassword" placeholder="Digite nova senha se desejar">
+                        </div>
+                        <div class="form-group" id="managerLinkSection" style="display:none;">
+                            <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
+                            <label>Vincular a um Gestor Financeiro</label>
+                            <input type="email" id="settingsManagerEmail" placeholder="Email do gestor (opcional)">
+                            <small style="color: var(--text-secondary); display: block; margin-top: 8px;">
+                                Digite o email do gestor financeiro que deseja te orientar. Deixe em branco para remover vínculo atual.
+                            </small>
+                            <div id="currentManagerInfo" style="margin-top: 12px; padding: 12px; background: var(--bg-secondary); border-radius: 8px; display: none;">
+                                <strong>Gestor atual:</strong> <span id="currentManagerName"></span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width:100%;">Salvar Alterações</button>
+                    </form>
+                </div>
+                <!-- Formulário de verificação -->
+                <div id="settingsVerifyForm" style="display:none;">
+                    <div style="text-align:center;margin-bottom:24px;">
+                        <p style="font-size:48px;margin-bottom:12px;">📧</p>
+                        <h3 style="margin-bottom:8px;">Verificação necessária</h3>
+                        <p style="color:var(--text-secondary);">Um código de verificação foi enviado para seu email.</p>
+                    </div>
+                    <form onsubmit="handleVerifyCode(event)">
+                        <input type="hidden" id="verifyType">
+                        <div class="form-group">
+                            <label>Código de Verificação</label>
+                            <input type="text" id="verifyCode" required pattern="\d{6}" inputmode="numeric" maxlength="6" placeholder="Digite o código de 6 dígitos" title="Digite exatamente 6 números">
+                        </div>
+                        <div style="display:flex;gap:12px;">
+                            <button type="button" class="btn" onclick="toggleSettingsForm()" style="flex:1;">Voltar</button>
+                            <button type="submit" class="btn btn-primary" style="flex:1;">Verificar</button>
+                        </div>
+                        <div style="margin-top:12px;text-align:center;">
+                            <button type="button" class="btn" onclick="handleResendCode()" style="font-size:14px;color:var(--text-secondary);">Reenviar código</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Notificações -->
+    <div id="notificationsModal" class="modal">
+        <div class="modal-content" style="max-width:800px;">
+            <div class="modal-header">
+                <h2>Notificações</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div style="padding:24px;">
+                <div id="notificationsList">Carregando notificações...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Criar Cliente -->
+    <div id="createClientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Novo Cliente</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="createClientAlert"></div>
+            <form onsubmit="handleCreateClient(event)">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" id="clientName" required placeholder="Nome do cliente">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="clientEmail" required placeholder="email@exemplo.com">
+                </div>
+                <div class="form-group">
+                    <label>Senha Inicial</label>
+                    <input type="password" id="clientPassword" required placeholder="Mínimo 6 caracteres">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Criar Cliente</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'api';
+        let currentUser = null;
+        let categories = [];
+        let monthlyChart = null;
+
+        // Verifica autenticação ao carregar
+        function showDashboard() {
+            console.log('Exibindo dashboard para:', currentUser); // Debug
+            // Controla visibilidade de ações privadas (aparecem somente quando logado)
+            const privateActions = document.querySelectorAll('.private-action');
+            if (currentUser && currentUser.role) {
+                privateActions.forEach(el => el.style.display = 'inline-block');
+            } else {
+                privateActions.forEach(el => el.style.display = 'none');
+            }
+
+            // Esconde todas as seções principais
+            document.getElementById('landing').style.display = 'none';
+            document.getElementById('userDashboard').style.display = 'none';
+            document.getElementById('managerDashboard').style.display = 'none';
+
+            // Atualiza o botão de autenticação
+            const authBtn = document.getElementById('authBtn');
+            if (currentUser && currentUser.name) {
+                authBtn.textContent = currentUser.name.split(' ')[0];
+                authBtn.onclick = logout;
+            }
+
+            // Determina qual dashboard mostrar
+            if (currentUser && currentUser.role) {
+                console.log('Papel do usuário:', currentUser.role); // Debug
+
+                if (currentUser.role === 'manager') {
+                    console.log('Mostrando dashboard do gestor'); // Debug
+                    document.getElementById('managerDashboard').style.display = 'block';
+                    loadManagerDashboard();
+                } else if (currentUser.role === 'user') {
+                    console.log('Mostrando dashboard do usuário'); // Debug
+                    document.getElementById('userDashboard').style.display = 'block';
+                    document.getElementById('userName').textContent = currentUser.name;
+                    loadUserDashboard();
+                }
+            } else {
+                console.error('Usuário ou papel não definido:', currentUser); // Debug
+                document.getElementById('landing').style.display = 'block';
+            }
+        }
+
+        // Carrega categorias
+        async function loadCategories() {
+            try {
+                const response = await fetch(`${API_BASE}/categories.php`);
+                const data = await response.json();
+                categories = data.categories || [];
+
+                // Popula selects
+                const selects = [document.getElementById('accountCategory'), document.getElementById('filterCategory')];
+                selects.forEach(select => {
+                    if (select.id === 'accountCategory') {
+                        select.innerHTML = '<option value="">Selecione uma categoria</option>';
+                    } else {
+                        select.innerHTML = '<option value="">Todas as categorias</option>';
+                    }
+
+                    categories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat.id;
+                        option.textContent = cat.icon + ' ' + cat.name;
+                        select.appendChild(option);
+                    });
+                });
+            } catch (error) {
+                console.error('Erro ao carregar categorias:', error);
+            }
+        }
+
+        // Modals
+        function showAuthModal(tab = 'login') {
+            document.getElementById('authModal').classList.add('active');
+            switchAuthTab(tab);
+        }
+
+        function showAddAccountModal() {
+            document.getElementById('accountModal').classList.add('active');
+            document.getElementById('accountDate').valueAsDate = new Date();
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        }
+
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.form-content').forEach(c => c.classList.remove('active'));
+
+            if (tab === 'login') {
+                document.querySelector('[onclick="switchAuthTab(\'login\')"]').classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelector('[onclick="switchAuthTab(\'register\')"]').classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 4000);
+        }
+
+        /* Novas janelas: funções auxiliares e handlers */
+        function showMonthlyReportModal() {
+            document.getElementById('monthlyReportModal').classList.add('active');
+            const m = new Date();
+            document.getElementById('reportMonth').value = `${m.getFullYear()}-${String(m.getMonth()+1).padStart(2,'0')}`;
+            document.getElementById('monthlyReportContent').innerHTML = '';
+        }
+
+        async function generateMonthlyReport() {
+            const month = document.getElementById('reportMonth').value;
+            if (!month) { showAlert('Selecione um mês', 'error'); return; }
+            const container = document.getElementById('monthlyReportContent');
+            container.innerHTML = 'Gerando relatório...';
+            try {
+                const resp = await fetch(`${API_BASE}/accounts.php?month=${month}`);
+                if (!resp.ok) throw new Error('Falha ao buscar dados');
+                const data = await resp.json();
+                const accounts = data.accounts || [];
+
+                const total = accounts.reduce((s,a) => s + (parseFloat(a.value) || 0), 0);
+                const byCategory = {};
+                accounts.forEach(a => {
+                    const cat = a.category_name || 'Outros';
+                    byCategory[cat] = (byCategory[cat] || 0) + (parseFloat(a.value) || 0);
+                });
+
+                let html = `<p><strong>Total do mês:</strong> R$ ${total.toFixed(2)}</p>`;
+                html += '<ul>';
+                Object.keys(byCategory).forEach(k => html += `<li>${k}: R$ ${byCategory[k].toFixed(2)}</li>`);
+                html += '</ul>';
+                html += '<div style="margin-top:12px;">(Gráfico futuramente)</div>';
+
+                container.innerHTML = html;
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '';
+                showAlert('Erro ao gerar relatório', 'error');
+            }
+        }
+
+        function showImportExportModal() {
+            document.getElementById('importExportModal').classList.add('active');
+            document.getElementById('importExportResult').innerHTML = '';
+            document.getElementById('importFile').value = '';
+        }
+
+        async function exportAccountsCSV() {
+            try {
+                const resp = await fetch(`${API_BASE}/accounts.php`);
+                if (!resp.ok) throw new Error('Falha ao buscar contas');
+                const data = await resp.json();
+                const accounts = data.accounts || [];
+                if (!accounts.length) { showAlert('Nenhuma conta para exportar', 'error'); return; }
+
+                const headers = ['id','user_id','group_id','category_id','category_name','value','date','description','created_at'];
+                const rows = accounts.map(a => headers.map(h => '"' + ((a[h]===null||a[h]===undefined)?'':String(a[h]).replace(/"/g,'""')) + '"').join(','));
+                const csv = headers.join(',') + '\n' + rows.join('\n');
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `accounts_export_${new Date().toISOString().slice(0,10)}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                showAlert('Exportação iniciada', 'success');
+            } catch (err) {
+                console.error(err);
+                showAlert('Erro ao exportar CSV', 'error');
+            }
+        }
+
+        async function handleImportCSV() {
+            const input = document.getElementById('importFile');
+            const result = document.getElementById('importExportResult');
+            if (!input.files || !input.files[0]) { showAlert('Selecione um arquivo CSV', 'error'); return; }
+            const file = input.files[0];
+            result.innerHTML = 'Processando arquivo...';
+            try {
+                const text = await file.text();
+                const lines = text.split(/\r?\n/).filter(l => l.trim());
+                const header = lines.shift().split(',').map(h => h.replace(/"/g,'').trim());
+                let imported = 0, failed = 0;
+                for (const line of lines) {
+                    const cols = line.split(',').map(c => c.replace(/"/g,'').trim());
+                    const obj = {};
+                    header.forEach((h,i) => obj[h]=cols[i]);
+                    // Tentativa de mapear colunas básicas
+                    const payload = {
+                        category_id: obj.category_id || obj.category || 0,
+                        value: obj.value || obj.amount || 0,
+                        date: obj.date || obj.data || new Date().toISOString().slice(0,10),
+                        description: obj.description || obj.desc || ''
+                    };
+                    try {
+                        const resp = await fetch(`${API_BASE}/accounts.php`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (resp.ok) imported++; else failed++;
+                    } catch (e) { failed++; }
+                }
+                result.innerHTML = `Importação finalizada. Sucesso: ${imported}, Falhas: ${failed}`;
+            } catch (err) {
+                console.error(err);
+                result.innerHTML = '';
+                showAlert('Erro ao importar CSV', 'error');
+            }
+        }
+
+        function showGroupsModal() {
+            document.getElementById('groupsModal').classList.add('active');
+            // mostra/oculta o formulário de criação de grupo dependendo do papel do usuário
+            const createForm = document.querySelector('#groupsModal form');
+            if (currentUser && currentUser.role === 'manager') {
+                if (createForm) createForm.style.display = '';
+            } else {
+                if (createForm) createForm.style.display = 'none';
+                // adiciona mensagem informativa se não for gestor
+                let notice = document.getElementById('groupsCreateNotice');
+                if (!notice) {
+                    notice = document.createElement('div');
+                    notice.id = 'groupsCreateNotice';
+                    notice.style.marginBottom = '12px';
+                    notice.style.color = 'var(--text-secondary)';
+                    notice.textContent = 'Apenas gestores podem criar famílias aqui. Contate seu gestor para solicitar a criação.';
+                    const modalPad = document.querySelector('#groupsModal .modal-content > div');
+                    if (modalPad) modalPad.insertBefore(notice, modalPad.firstChild.nextSibling);
+                }
+            }
+            loadGroups();
+        }
+
+        async function loadGroups() {
+            const list = document.getElementById('groupsList');
+            list.innerHTML = 'Carregando...';
+            try {
+                const resp = await fetch(`${API_BASE}/groups.php`);
+                if (!resp.ok) { list.innerHTML = '<em>Endpoint de grupos não disponível</em>'; return; }
+                const data = await resp.json();
+                const groups = data.groups || [];
+                if (!groups.length) { list.innerHTML = '<em>Nenhum grupo</em>'; return; }
+                list.innerHTML = '';
+                groups.forEach(g => {
+                    const li = document.createElement('li');
+                    li.style.marginBottom = '8px';
+                    li.style.padding = '8px';
+
+                    const header = document.createElement('div');
+                    header.style.display = 'flex';
+                    header.style.alignItems = 'center';
+                    header.style.justifyContent = 'space-between';
+
+                    const left = document.createElement('div');
+                    const title = document.createElement('strong');
+                    title.textContent = g.name + ' ';
+                    left.appendChild(title);
+
+                    const meta = document.createElement('span');
+                    meta.style.color = 'var(--text-secondary)';
+                    meta.style.marginLeft = '8px';
+                    const isOwner = currentUser && currentUser.id && (parseInt(currentUser.id) === parseInt(g.owner_id));
+                    meta.textContent = isOwner ? 'Você (dono)' : `Membros: ${g.member_count || 0}`;
+                    left.appendChild(meta);
+
+                    header.appendChild(left);
+
+                    const actions = document.createElement('div');
+                    actions.style.display = 'flex';
+                    actions.style.gap = '8px';
+
+                    const manageBtn = document.createElement('button');
+                    manageBtn.className = 'btn';
+                    manageBtn.textContent = 'Gerenciar';
+                    manageBtn.onclick = () => {
+                        const details = li.querySelector('.group-details');
+                        if (details) {
+                            details.classList.toggle('active');
+                        } else {
+                            const det = document.createElement('div');
+                            det.className = 'group-details';
+                            det.style.marginTop = '8px';
+                            det.innerHTML = '<em>Carregando membros...</em>';
+                            li.appendChild(det);
+                            loadGroupMembers(g.id, det);
+                        }
+                    };
+                    actions.appendChild(manageBtn);
+
+                    if (isOwner) {
+                        const delBtn = document.createElement('button');
+                        delBtn.className = 'btn';
+                        delBtn.textContent = 'Excluir';
+                        delBtn.style.marginLeft = '6px';
+                        delBtn.onclick = () => { if (confirm('Confirma excluir o grupo?')) deleteGroup(g.id); };
+                        actions.appendChild(delBtn);
+                    }
+
+                    header.appendChild(actions);
+
+                    li.appendChild(header);
+                    list.appendChild(li);
+                });
+            } catch (err) {
+                console.error(err);
+                list.innerHTML = '<em>Erro ao carregar grupos</em>';
+            }
+        }
+
+        async function handleCreateGroup(e) {
+            e.preventDefault();
+            if (!currentUser || currentUser.role !== 'manager') { showAlert('Apenas gestores podem criar famílias', 'error'); return; }
+            const name = document.getElementById('newGroupName').value.trim();
+            if (!name) { showAlert('Digite o nome do grupo', 'error'); return; }
+            try {
+                const resp = await fetch(`${API_BASE}/groups.php`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name })
+                });
+                if (resp.ok) {
+                    showAlert('Grupo criado', 'success');
+                    document.getElementById('newGroupName').value = '';
+                    loadGroups();
+                } else {
+                    const d = await resp.json(); showAlert(d.error || 'Erro ao criar grupo', 'error');
+                }
+            } catch (err) { console.error(err); showAlert('Erro ao criar grupo', 'error'); }
+        }
+
+        async function deleteGroup(id) {
+            if (!confirm('Confirma exclusão do grupo?')) return;
+            try {
+                const resp = await fetch(`${API_BASE}/groups.php?id=${id}`, { method: 'DELETE' });
+                if (resp.ok) { showAlert('Grupo excluído', 'success'); loadGroups(); }
+                else { const d = await resp.json(); showAlert(d.error || 'Erro ao excluir', 'error'); }
+            } catch (err) { console.error(err); showAlert('Erro ao excluir grupo', 'error'); }
+        }
+
+        // Carrega membros de um grupo e monta UI de gerenciamento (adicionar por email e remoção)
+        async function loadGroupMembers(groupId, container) {
+            container.innerHTML = 'Carregando membros...';
+            try {
+                const resp = await fetch(`${API_BASE}/groups.php?group_id=${groupId}`);
+                if (!resp.ok) { container.innerHTML = '<em>Erro ao carregar membros</em>'; return; }
+                const data = await resp.json();
+                const members = data.members || [];
+                const group = data.group || {};
+
+                const isOwner = currentUser && currentUser.id && (parseInt(currentUser.id) === parseInt(group.owner_id));
+
+                const ul = document.createElement('ul');
+                ul.style.listStyle = 'none';
+                ul.style.padding = '0';
+                ul.style.margin = '0 0 8px 0';
+
+                members.forEach(m => {
+                    const li = document.createElement('li');
+                    li.style.display = 'flex';
+                    li.style.justifyContent = 'space-between';
+                    li.style.alignItems = 'center';
+                    li.style.padding = '6px 0';
+
+                    const left = document.createElement('div');
+                    left.textContent = `${m.name} — ${m.email}`;
+                    li.appendChild(left);
+
+                    if (isOwner && parseInt(m.id) !== parseInt(group.owner_id)) {
+                        const rm = document.createElement('button');
+                        rm.className = 'btn btn-sm';
+                        rm.textContent = 'Remover';
+                        rm.onclick = () => { if (confirm('Remover este membro do grupo?')) removeMemberFromGroup(groupId, m.id, container); };
+                        li.appendChild(rm);
+                    }
+
+                    ul.appendChild(li);
+                });
+
+                const addSection = document.createElement('div');
+                addSection.style.display = 'flex';
+                addSection.style.gap = '8px';
+                addSection.style.marginTop = '8px';
+
+                const emailInput = document.createElement('input');
+                emailInput.type = 'email';
+                emailInput.placeholder = 'Email do usuário (ex: exemplo@...)';
+                emailInput.style.flex = '1';
+                addSection.appendChild(emailInput);
+
+                const addBtn = document.createElement('button');
+                addBtn.className = 'btn btn-primary';
+                addBtn.textContent = 'Adicionar membro';
+                addBtn.onclick = async () => {
+                    const email = emailInput.value.trim();
+                    if (!email) { showAlert('Digite o email do usuário', 'error'); return; }
+                    await addMemberToGroup(groupId, email, container);
+                };
+                addSection.appendChild(addBtn);
+
+                container.innerHTML = '';
+                container.appendChild(ul);
+                if (isOwner) container.appendChild(addSection);
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<em>Erro ao carregar membros</em>';
+            }
+        }
+
+        async function addMemberToGroup(groupId, email, container) {
+            try {
+                const resp = await fetch(`${API_BASE}/groups.php`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'add_member', group_id: groupId, email })
+                });
+                const d = await resp.json();
+                if (resp.ok) {
+                    showAlert('Membro adicionado', 'success');
+                    // reload members
+                    loadGroupMembers(groupId, container);
+                    loadGroups();
+                } else {
+                    showAlert(d.error || 'Erro ao adicionar membro', 'error');
+                }
+            } catch (err) { console.error(err); showAlert('Erro ao adicionar membro', 'error'); }
+        }
+
+        async function removeMemberFromGroup(groupId, userId, container) {
+            try {
+                const resp = await fetch(`${API_BASE}/groups.php`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'remove_member', group_id: groupId, user_id: userId })
+                });
+                const d = await resp.json();
+                if (resp.ok) {
+                    showAlert('Membro removido', 'success');
+                    loadGroupMembers(groupId, container);
+                    loadGroups();
+                } else {
+                    showAlert(d.error || 'Erro ao remover membro', 'error');
+                }
+            } catch (err) { console.error(err); showAlert('Erro ao remover membro', 'error'); }
+        }
+
+        async function showSettingsModal() {
+            document.getElementById('settingsModal').classList.add('active');
+            if (currentUser) {
+                document.getElementById('settingsName').value = currentUser.name || '';
+                document.getElementById('settingsEmail').value = currentUser.email || '';
+                
+                // Mostra opção de vincular gestor apenas para usuários (não gestores)
+                const managerSection = document.getElementById('managerLinkSection');
+                if (currentUser.role === 'user') {
+                    managerSection.style.display = 'block';
+                    document.getElementById('settingsManagerEmail').value = '';
+                    
+                    // Carrega informações do gestor atual, se houver
+                    try {
+                        const response = await fetch(`${API_BASE}/auth.php?action=get-manager`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.manager) {
+                                document.getElementById('currentManagerInfo').style.display = 'block';
+                                document.getElementById('currentManagerName').textContent = 
+                                    `${data.manager.name} (${data.manager.email})`;
+                            } else {
+                                document.getElementById('currentManagerInfo').style.display = 'none';
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Erro ao carregar gestor:', error);
+                    }
+                } else {
+                    managerSection.style.display = 'none';
+                }
+            }
+        }
+
+        // Funções do modal de configurações
+        function showSettingsAlert(message, type) {
+            const alert = document.getElementById('settingsAlert');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            setTimeout(() => alert.style.display = 'none', 4000);
+        }
+
+        function toggleSettingsForm(showVerify = true) {
+            document.getElementById('settingsForm').style.display = showVerify ? 'none' : 'block';
+            document.getElementById('settingsVerifyForm').style.display = showVerify ? 'block' : 'none';
+            
+            // Se voltar para o formulário, limpa pendingUpdate
+            if (!showVerify) {
+                pendingUpdate = null;
+                document.getElementById('verifyCode').value = '';
+            }
+        }
+
+        // Estado temporário para update em progresso
+        let pendingUpdate = null;
+
+        async function handleUpdateAccount(e) {
+            e.preventDefault();
+            const name = document.getElementById('settingsName').value.trim();
+            const email = document.getElementById('settingsEmail').value.trim();
+            const password = document.getElementById('settingsPassword').value;
+            const managerEmail = document.getElementById('settingsManagerEmail')?.value.trim() || null;
+            
+            try {
+                const resp = await fetch(`${API_BASE}/auth.php?action=update`, {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ name, email, password, manager_email: managerEmail })
+                });
+                const data = await resp.json();
+
+                if (resp.ok) {
+                    // Sucesso - atualiza interface e fecha modal
+                    if (currentUser) {
+                        currentUser.name = name;
+                        currentUser.email = email;
+                    }
+                    const authBtn = document.getElementById('authBtn');
+                    if (authBtn && currentUser?.name) authBtn.textContent = currentUser.name.split(' ')[0];
+                    const userNameElement = document.getElementById('userName');
+                    if (userNameElement && currentUser?.name) userNameElement.textContent = currentUser.name;
+                    document.getElementById('settingsPassword').value = '';
+                    showAlert('Configurações atualizadas', 'success');
+                    closeModal();
+                } else if (resp.status === 401 && data.requires_verification) {
+                    // Necessita verificação - mostra formulário de código
+                    pendingUpdate = { name, email, password, manager_email: managerEmail }; // Salva temporariamente
+                    console.log('Verificação necessária. Dados salvos:', { name, email, hasPassword: !!password, hasManager: !!managerEmail });
+                    document.getElementById('verifyType').value = data.type;
+                    document.getElementById('verifyCode').value = ''; // Limpa campo
+                    toggleSettingsForm(true);
+                    // Envia código imediatamente
+                    await handleSendCode(data.type);
+                } else {
+                    showSettingsAlert(data.error || 'Erro ao atualizar', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showSettingsAlert('Erro de conexão', 'error');
+            }
+        }
+
+        async function handleSendCode(type) {
+            try {
+                const resp = await fetch(`${API_BASE}/verify.php?action=send_code`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type })
+                });
+                const data = await resp.json();
+                
+                if (resp.ok) {
+                    // Em desenvolvimento, mostra o código
+                    if (data.debug_code) {
+                        showSettingsAlert(`✅ Código enviado! Use: ${data.debug_code}`, 'success');
+                        console.log('🔑 CÓDIGO DE VERIFICAÇÃO:', data.debug_code);
+                    } else {
+                        showSettingsAlert('Código enviado para seu email', 'success');
+                    }
+                } else {
+                    showSettingsAlert(data.error || 'Erro ao enviar código', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showSettingsAlert('Erro ao enviar código', 'error');
+            }
+        }
+
+        async function handleResendCode() {
+            const type = document.getElementById('verifyType').value;
+            if (!type) {
+                showSettingsAlert('Tipo de verificação inválido', 'error');
+                return;
+            }
+            await handleSendCode(type);
+        }
+
+        async function handleVerifyCode(e) {
+            e.preventDefault();
+            
+            console.log('Verificando código. pendingUpdate existe?', !!pendingUpdate);
+            
+            if (!pendingUpdate) {
+                showSettingsAlert('Nenhuma atualização pendente. Por favor, tente novamente.', 'error');
+                toggleSettingsForm(false); // Volta para o formulário
+                return;
+            }
+
+            const code = document.getElementById('verifyCode').value.trim();
+            const type = document.getElementById('verifyType').value;
+            
+            // Valida formato do código
+            if (!/^\d{6}$/.test(code)) {
+                showSettingsAlert('O código deve ter exatamente 6 números', 'error');
+                return;
+            }
+            
+            console.log('Enviando código:', code);
+
+            try {
+                // Primeiro verifica o código
+                const verifyResp = await fetch(`${API_BASE}/verify.php?action=confirm_code`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code, type })
+                });
+                const verifyData = await verifyResp.json();
+
+                if (!verifyResp.ok) {
+                    showSettingsAlert(verifyData.error || 'Código inválido', 'error');
+                    return;
+                }
+
+                // Agora tenta a atualização novamente com o token
+                const resp = await fetch(`${API_BASE}/auth.php?action=update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        ...pendingUpdate,
+                        verify_token: verifyData.token
+                    })
+                });
+                const data = await resp.json();
+
+                if (resp.ok) {
+                    if (currentUser) {
+                        currentUser.name = pendingUpdate.name;
+                        currentUser.email = pendingUpdate.email;
+                    }
+                    const authBtn = document.getElementById('authBtn');
+                    if (authBtn && currentUser?.name) authBtn.textContent = currentUser.name.split(' ')[0];
+                    const userNameElement = document.getElementById('userName');
+                    if (userNameElement && currentUser?.name) userNameElement.textContent = currentUser.name;
+                    
+                    showAlert('Conta atualizada com sucesso', 'success');
+                    pendingUpdate = null;
+                    closeModal();
+                } else {
+                    showSettingsAlert(data.error || 'Erro ao atualizar conta', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showSettingsAlert('Erro de conexão', 'error');
+            }
+        }
+
+        function showNotificationsModal() {
+            document.getElementById('notificationsModal').classList.add('active');
+            loadNotifications();
+        }
+
+        async function loadNotifications() {
+            const container = document.getElementById('notificationsList');
+            container.innerHTML = 'Carregando...';
+            try {
+                const resp = await fetch(`${API_BASE}/logs.php`);
+                if (!resp.ok) { container.innerHTML = '<em>Logs não disponíveis</em>'; return; }
+                const data = await resp.json();
+                const logs = data.logs || [];
+                if (!logs.length) { container.innerHTML = '<em>Sem notificações</em>'; return; }
+                const ul = document.createElement('ul');
+                ul.style.listStyle = 'none';
+                ul.style.padding = '0';
+                logs.forEach(l => {
+                    const li = document.createElement('li');
+                    li.style.marginBottom = '12px';
+                    li.style.padding = '12px';
+                    li.style.borderRadius = '10px';
+                    li.style.background = 'var(--bg-secondary)';
+
+                    // formata mensagem de forma mais informal
+                    const meta = l.meta ? (typeof l.meta === 'string' ? JSON.parse(l.meta || '{}') : l.meta) : {};
+                    let text = '';
+                    let icon = '📝';
+                    switch (l.action) {
+                        case 'user_registered':
+                            text = `Novo usuário cadastrado: ${meta.email || (meta.user_id ? 'id:'+meta.user_id : 'um usuário')}`;
+                            icon = '👤';
+                            break;
+                        case 'client_created_by_manager':
+                            text = `Você criou um novo cliente: ${meta.email || 'cliente'}`;
+                            icon = '✨';
+                            break;
+                        case 'user_login':
+                            text = `${meta.email || 'Alguém'} fez login no sistema`;
+                            icon = '🔓';
+                            break;
+                        case 'user_logout':
+                            text = `${meta.email || 'Alguém'} saiu do sistema`;
+                            icon = '🔒';
+                            break;
+                        case 'user_updated':
+                            text = `${meta.email || 'Um usuário'} atualizou as informações da conta`;
+                            icon = '✏️';
+                            break;
+                        case 'group_created':
+                            text = `Você criou a família "${meta.name || ''}"`;
+                            icon = '👨‍👩‍👧‍👦';
+                            break;
+                        case 'feedback_sent':
+                            text = `Você enviou um feedback para um cliente`;
+                            icon = '💬';
+                            break;
+                        case 'manager_linked':
+                            text = `Você se vinculou ao gestor: ${meta.manager_email || 'gestor'}`;
+                            icon = '🤝';
+                            break;
+                        case 'manager_unlinked':
+                            text = `Você removeu o vínculo com seu gestor`;
+                            icon = '🔗';
+                            break;
+                        default:
+                            text = `${l.action.replace(/_/g,' ')}`;
+                            icon = '📝';
+                    }
+
+                    const timeSpan = document.createElement('div');
+                    timeSpan.style.fontSize = '12px';
+                    timeSpan.style.color = 'var(--text-secondary)';
+                    timeSpan.textContent = timeAgo(new Date(l.created_at));
+
+                    const p = document.createElement('div');
+                    p.style.fontSize = '14px';
+                    p.style.display = 'flex';
+                    p.style.alignItems = 'center';
+                    p.style.gap = '8px';
+                    p.innerHTML = `<span style="font-size: 20px;">${icon}</span><span>${text}</span>`;
+
+                    li.appendChild(p);
+                    li.appendChild(timeSpan);
+                    ul.appendChild(li);
+                });
+                container.innerHTML = '';
+                container.appendChild(ul);
+            } catch (err) { console.error(err); container.innerHTML = '<em>Erro ao carregar notificações</em>'; }
+        }
+
+        function timeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'agora mesmo';
+            const intervals = [[60, 'segundo'], [60*60, 'minuto'], [60*60*24, 'hora'], [60*60*24*30, 'dia'], [60*60*24*365, 'mês']];
+            let counter = seconds;
+            for (let i = 0; i < intervals.length; i++) {
+                const unit = intervals[i][1];
+                const threshold = intervals[i][0];
+                if (seconds < threshold) {
+                    const value = Math.floor(counter / (i === 0 ? 1 : intervals[i-1][0]));
+                    return `${value} ${unit}${value>1? 's':''} atrás`;
+                }
+                counter = Math.floor(counter / (i === 0 ? 60 : (intervals[i-1][0])));
+            }
+            return date.toLocaleString();
+        }
+
+        // Auth handlers
+        async function handleRegister(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const role = document.getElementById('registerRole').value;
+
+            if (!role) {
+                showAlert('Selecione o tipo de conta!', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth.php?action=register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, role }),
+                    credentials: 'include' // garante envio do cookie de sessão
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('Conta criada com sucesso! Faça login.', 'success');
+                    setTimeout(() => {
+                        switchAuthTab('login');
+                        document.getElementById('loginEmail').value = email;
+                    }, 2000);
+                } else {
+                    showAlert(data.error || 'Erro ao criar conta', 'error');
+                }
+            } catch (error) {
+                showAlert('Erro ao conectar com o servidor', 'error');
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            console.log('Iniciando login...'); // Debug
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth.php?action=login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                    credentials: 'include' // garante envio do cookie de sessão
+                });
+
+                const data = await response.json();
+                console.log('Resposta do login:', data); // Debug
+
+                    if (response.ok && data.user) {
+                        currentUser = (typeof data.user === 'object' && data.user !== null) ? data.user : {};
+                        console.log('DEBUG: currentUser após login:', currentUser);
+                        showAlert('Login realizado com sucesso!', 'success');
+                        await loadCategories();
+                        closeModal();
+                        showDashboard();
+                    } else {
+                        showAlert(data.error || 'Erro ao fazer login', 'error');
+                    }
+            } catch (error) {
+                console.error('Erro no login:', error); // Debug
+                showAlert('Erro ao conectar com o servidor', 'error');
+            }
+        }
+
+        async function logout() {
+            try {
+                await fetch(`${API_BASE}/auth.php?action=logout`, { method: 'POST' });
+                currentUser = null;
+
+                // Reset UI elements
+                const authBtn = document.getElementById('authBtn');
+                if (authBtn) {
+                    authBtn.textContent = 'Entrar';
+                    authBtn.onclick = () => showAuthModal();
+                }
+
+                // Hide dashboards and show landing
+                document.getElementById('landing').style.display = 'block';
+                document.getElementById('userDashboard').style.display = 'none';
+                document.getElementById('managerDashboard').style.display = 'none';
+
+                // Clear any selected client data
+                document.getElementById('clientSelector').value = '';
+                document.getElementById('noClientSelected').style.display = 'block';
+                document.getElementById('clientContent').style.display = 'none';
+
+                // Atualiza visibilidade de botões privados
+                showDashboard();
+
+            } catch (error) {
+                console.error('Erro ao fazer logout:', error);
+                showAlert('Erro ao fazer logout', 'error');
+            }
+        }
+
+        // Dashboard
+        function showDashboard() {
+            // Verifica se temos um usuário válido
+            if (!currentUser || !currentUser.role) {
+                // Oculta ações privadas por padrão
+                document.querySelectorAll('.private-action').forEach(el => el.style.display = 'none');
+                document.getElementById('landing').style.display = 'block';
+                document.getElementById('userDashboard').style.display = 'none';
+                document.getElementById('managerDashboard').style.display = 'none';
+                // para polling do gestor
+                if (typeof stopManagerPolling === 'function') stopManagerPolling();
+                return;
+            }
+
+            // Esconde todas as seções principais
+            document.getElementById('landing').style.display = 'none';
+            document.getElementById('userDashboard').style.display = 'none';
+            document.getElementById('managerDashboard').style.display = 'none';
+
+            // Atualiza o botão de autenticação com verificação de segurança
+            const authBtn = document.getElementById('authBtn');
+            if (authBtn) {
+                if (currentUser && typeof currentUser.name === 'string' && currentUser.name) {
+                    console.log('DEBUG: authBtn - currentUser.name:', currentUser.name);
+                    authBtn.textContent = currentUser.name.split(' ')[0];
+                } else {
+                    console.log('DEBUG: authBtn - currentUser.name está indefinido ou vazio');
+                    authBtn.textContent = 'Menu';
+                }
+                authBtn.onclick = logout;
+            }
+
+            // Exibe ações privadas para usuário autenticado
+            document.querySelectorAll('.private-action').forEach(el => el.style.display = 'inline-block');
+
+            // Mostra o dashboard apropriado
+            if (currentUser && currentUser.role === 'manager') {
+                document.getElementById('managerDashboard').style.display = 'block';
+                loadManagerDashboard();
+            } else if (currentUser && currentUser.role === 'user') {
+                document.getElementById('userDashboard').style.display = 'block';
+                const userNameElement = document.getElementById('userName');
+                if (userNameElement) {
+                    if (currentUser && typeof currentUser.name === 'string' && currentUser.name) {
+                        console.log('DEBUG: userDashboard - currentUser.name:', currentUser.name);
+                        userNameElement.textContent = currentUser.name;
+                    } else {
+                        console.log('DEBUG: userDashboard - currentUser.name está indefinido ou vazio');
+                        userNameElement.textContent = '';
+                    }
+                }
+                loadUserDashboard();
+            }
+        }
+
+        // User Dashboard
+        async function loadUserDashboard() {
+            document.getElementById('loadingAccounts').style.display = 'flex';
+            document.getElementById('loadingFeedbacks').style.display = 'flex';
+
+            try {
+                await Promise.all([
+                    loadUserAccounts(),
+                    loadUserFeedbacks()
+                ]);
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showAlert('Erro ao carregar o dashboard. Por favor, tente novamente.', 'error');
+            } finally {
+                document.getElementById('loadingAccounts').style.display = 'none';
+                document.getElementById('loadingFeedbacks').style.display = 'none';
+            }
+        }
+
+        async function loadUserAccounts() {
+            const categoryId = document.getElementById('filterCategory').value;
+            const month = document.getElementById('filterMonth').value;
+
+            let url = `${API_BASE}/accounts.php?`;
+            if (categoryId) url += `category_id=${categoryId}&`;
+            if (month) url += `month=${month}&`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                const accounts = data.accounts || [];
+
+                updateUserStats(accounts);
+                displayUserAccounts(accounts);
+                updateChart(accounts);
+            } catch (error) {
+                console.error('Erro ao carregar contas:', error);
+                showAlert('Erro ao carregar suas despesas. Por favor, tente novamente.', 'error');
+            }
+        }
+
+        function updateUserStats(accounts) {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            const monthAccounts = accounts.filter(a => {
+                const d = new Date(a.date);
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            });
+
+            const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+            const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+            const lastMonthAccounts = accounts.filter(a => {
+                const d = new Date(a.date);
+                return d.getMonth() === lastMonth && d.getFullYear() === lastMonthYear;
+            });
+
+            const total = monthAccounts.reduce((sum, a) => sum + parseFloat(a.value), 0);
+            const lastTotal = lastMonthAccounts.reduce((sum, a) => sum + parseFloat(a.value), 0);
+
+            document.getElementById('totalMonth').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            document.getElementById('totalAccounts').textContent = accounts.length;
+
+            if (lastTotal > 0) {
+                const diff = ((total - lastTotal) / lastTotal * 100).toFixed(1);
+                const arrow = diff > 0 ? '↑' : '↓';
+                const color = diff > 0 ? 'var(--danger)' : 'var(--success)';
+                document.getElementById('monthComparison').innerHTML =
+                    `<span style="color:${color}">${arrow} ${Math.abs(diff)}%</span> vs mês anterior`;
+            }
+
+            // Top categoria
+            const categoryTotals = {};
+            monthAccounts.forEach(a => {
+                const cat = a.category_name;
+                categoryTotals[cat] = (categoryTotals[cat] || 0) + parseFloat(a.value);
+            });
+
+            let topCat = '—';
+            let maxValue = 0;
+            for (const cat in categoryTotals) {
+                if (categoryTotals[cat] > maxValue) {
+                    maxValue = categoryTotals[cat];
+                    topCat = cat;
+                }
+            }
+
+            document.getElementById('topCategory').textContent = topCat;
+            document.getElementById('categoryValue').textContent = maxValue > 0 ?
+                `R$ ${maxValue.toFixed(2).replace('.', ',')}` : 'R$ 0,00';
+        }
+
+        function displayUserAccounts(accounts) {
+            const tbody = document.getElementById('accountsTableBody');
+            tbody.innerHTML = '';
+
+            if (accounts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-state-icon">📭</div><p>Nenhuma despesa encontrada</p></div></td></tr>';
+                return;
+            }
+
+            accounts.forEach(acc => {
+                const row = tbody.insertRow();
+                const date = new Date(acc.date).toLocaleDateString('pt-BR');
+                const value = parseFloat(acc.value).toFixed(2).replace('.', ',');
+
+                row.innerHTML = `
+                    <td>${date}</td>
+                    <td>${acc.category_icon} ${acc.category_name}</td>
+                    <td>${acc.description || '—'}</td>
+                    <td><strong>R$ ${value}</strong></td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteAccount(${acc.id})">Excluir</button></td>
+                `;
+            });
+        }
+
+        function updateChart(accounts) {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            const monthAccounts = accounts.filter(a => {
+                const d = new Date(a.date);
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            });
+
+            const categoryData = {};
+            monthAccounts.forEach(a => {
+                const cat = a.category_name;
+                categoryData[cat] = (categoryData[cat] || 0) + parseFloat(a.value);
+            });
+
+            const labels = Object.keys(categoryData);
+            const data = Object.values(categoryData);
+            const colors = [
+                '#0071e3', '#34c759', '#ff3b30', '#ff9500',
+                '#af52de', '#00c7be', '#ff2d55', '#5856d6'
+            ];
+
+            const ctx = document.getElementById('monthlyChart');
+            if (monthlyChart) monthlyChart.destroy();
+
+            monthlyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Gastos (R$)',
+                        data: data,
+                        backgroundColor: colors,
+                        borderRadius: 8,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => `R$ ${value.toFixed(0)}`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        async function handleAddAccount(e) {
+            e.preventDefault();
+
+            const categoryId = document.getElementById('accountCategory').value;
+            const value = document.getElementById('accountValue').value;
+            const date = document.getElementById('accountDate').value;
+            const description = document.getElementById('accountDescription').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/accounts.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category_id: categoryId, value, date, description })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    closeModal();
+                    e.target.reset();
+                    loadUserAccounts();
+                    showAlert('Despesa adicionada com sucesso!', 'success');
+                } else {
+                    showAlert(data.error || 'Erro ao adicionar despesa', 'error');
+                }
+            } catch (error) {
+                showAlert('Erro ao conectar com o servidor', 'error');
+            }
+        }
+
+        async function deleteAccount(id) {
+            if (!confirm('Deseja realmente excluir esta despesa?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/accounts.php?id=${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadUserAccounts();
+                    showAlert('Despesa excluída com sucesso!', 'success');
+                }
+            } catch (error) {
+                showAlert('Erro ao excluir despesa', 'error');
+            }
+        }
+
+        async function loadUserFeedbacks() {
+            try {
+                const response = await fetch(`${API_BASE}/feedbacks.php`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                const feedbacks = data.feedbacks || [];
+
+                const container = document.getElementById('feedbacksList');
+
+                if (!Array.isArray(feedbacks) || feedbacks.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💬</div><p>Nenhum feedback recebido ainda</p></div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                feedbacks.forEach(fb => {
+                    if (!fb || !fb.created_at || !fb.message) return;
+
+                    const date = new Date(fb.created_at).toLocaleDateString('pt-BR');
+                    const div = document.createElement('div');
+                    div.style.cssText = 'padding: 20px; border-left: 3px solid var(--accent); background: var(--bg-secondary); border-radius: var(--radius-sm); margin-bottom: 16px;';
+                    div.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <strong>Feedback do Gestor</strong>
+                            <span style="color: var(--text-secondary); font-size: 13px;">${date}</span>
+                        </div>
+                        <p style="line-height: 1.6;">${fb.message}</p>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar feedbacks:', error);
+            }
+        }
+
+        // Manager Dashboard
+        async function loadManagerDashboard() {
+            document.getElementById('managerDashboard').style.display = 'block';
+            await Promise.all([
+                loadManagerStats(),
+                loadClientSelector()
+            ]);
+            // Inicia polling para atualizar lista de clientes e estatísticas periodicamente
+            startManagerPolling();
+        }
+
+        async function loadClientSelector() {
+            const select = document.getElementById('clientSelector');
+            const loadingOption = document.createElement('option');
+            loadingOption.textContent = 'Carregando clientes...';
+            select.innerHTML = '';
+            select.appendChild(loadingOption);
+            select.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/manager.php?action=clients`);
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar clientes');
+                }
+
+                const data = await response.json();
+                const clients = data.clients || [];
+
+                select.innerHTML = '<option value="">Selecione um cliente</option>';
+
+                if (clients.length === 0) {
+                    const emptyOption = document.createElement('option');
+                    emptyOption.disabled = true;
+                    emptyOption.textContent = 'Nenhum cliente encontrado';
+                    select.appendChild(emptyOption);
+                    showAlert('Você ainda não tem clientes cadastrados', 'info');
+                } else {
+                    clients.forEach(client => {
+                        const option = document.createElement('option');
+                        option.value = client.id;
+                        option.textContent = client.name;
+                        select.appendChild(option);
+                    });
+                }
+
+                // Show initial empty state
+                document.getElementById('noClientSelected').style.display = 'block';
+                document.getElementById('clientContent').style.display = 'none';
+            } catch (error) {
+                console.error('Erro ao carregar clientes:', error);
+                showAlert('Erro ao carregar lista de clientes. Por favor, tente novamente.', 'error');
+                select.innerHTML = '<option value="">Erro ao carregar clientes</option>';
+            } finally {
+                select.disabled = false;
+            }
+        }
+
+        // Criar Cliente (Gestor)
+        function showCreateClientModal() {
+            document.getElementById('createClientModal').classList.add('active');
+            document.getElementById('createClientAlert').innerHTML = '';
+        }
+
+        async function handleCreateClient(e) {
+            e.preventDefault();
+            const alertDiv = document.getElementById('createClientAlert');
+            
+            const name = document.getElementById('clientName').value.trim();
+            const email = document.getElementById('clientEmail').value.trim();
+            const password = document.getElementById('clientPassword').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/manager.php?action=create-client`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password }),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alertDiv.innerHTML = '<div class="alert alert-success">Cliente criado com sucesso!</div>';
+                    e.target.reset();
+                    
+                    // Recarrega lista de clientes
+                    await loadClientSelector();
+                    await loadManagerStats();
+                    
+                    // Fecha modal após 2 segundos
+                    setTimeout(() => {
+                        closeModal();
+                        alertDiv.innerHTML = '';
+                    }, 2000);
+                } else {
+                    alertDiv.innerHTML = `<div class="alert alert-error">${data.error || 'Erro ao criar cliente'}</div>`;
+                }
+            } catch (error) {
+                console.error('Erro ao criar cliente:', error);
+                alertDiv.innerHTML = '<div class="alert alert-error">Erro ao conectar com o servidor</div>';
+            }
+        }
+
+        // Polling para o dashboard do gestor: atualiza clients e stats periodicamente
+        let _managerPollId = null;
+        function startManagerPolling() {
+            // limpa se já existir
+            if (_managerPollId) clearInterval(_managerPollId);
+            _managerPollId = setInterval(async () => {
+                try {
+                    await Promise.all([loadManagerStats(), loadClientSelector()]);
+                } catch (e) {
+                    console.error('Erro no polling do manager:', e);
+                }
+            }, 10000); // a cada 10s
+        }
+
+        function stopManagerPolling() {
+            if (_managerPollId) { clearInterval(_managerPollId); _managerPollId = null; }
+        }
+
+        async function handleClientChange(clientId) {
+            const noClientSelected = document.getElementById('noClientSelected');
+            const clientContent = document.getElementById('clientContent');
+
+            if (!clientId) {
+                noClientSelected.style.display = 'block';
+                clientContent.style.display = 'none';
+                return;
+            }
+
+            noClientSelected.style.display = 'none';
+            clientContent.style.display = 'block';
+
+            const select = document.getElementById('clientSelector');
+            const selectedOption = select.options[select.selectedIndex];
+            document.getElementById('selectedClientName').textContent = selectedOption.textContent;
+            // Atualiza todos os campos hidden relacionados ao clientId
+            setCurrentClientIdForForms(clientId);
+
+            await loadClientData(clientId);
+        }
+
+        async function loadClientData(clientId) {
+            try {
+                const [accountsResponse, feedbacksResponse] = await Promise.all([
+                    fetch(`${API_BASE}/manager.php?action=client-accounts&client_id=${clientId}`),
+                    fetch(`${API_BASE}/feedbacks.php?client_id=${clientId}`)
+                ]);
+
+                const accountsData = await accountsResponse.json();
+                const feedbacksData = await feedbacksResponse.json();
+
+                // Load accounts table
+                const tbody = document.getElementById('clientAccountsTableBody');
+                tbody.innerHTML = '';
+
+                if (accountsData.accounts?.length > 0) {
+                    accountsData.accounts.forEach(account => {
+                        const value = parseFloat(account.value || 0).toFixed(2).replace('.', ',');
+                        const date = new Date(account.date).toLocaleDateString();
+
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${date}</td>
+                                <td>${account.category_name}</td>
+                                <td>R$ ${value}</td>
+                                <td>${account.description || '-'}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center">Nenhuma despesa registrada</td></tr>';
+                }
+
+                // Load feedbacks
+                const feedbacksList = document.getElementById('clientFeedbacksList');
+                feedbacksList.innerHTML = '';
+
+                if (feedbacksData.feedbacks?.length > 0) {
+                    feedbacksData.feedbacks.forEach(feedback => {
+                        const date = new Date(feedback.created_at).toLocaleDateString();
+                        feedbacksList.innerHTML += `
+                            <div class="feedback-card">
+                                <div class="feedback-header">
+                                    <span class="feedback-date">${date}</span>
+                                </div>
+                                <p class="feedback-message">${feedback.message}</p>
+                            </div>
+                        `;
+                    });
+                } else {
+                    feedbacksList.innerHTML = '<div class="empty-state">Nenhum feedback enviado ainda</div>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do cliente:', error);
+                showAlert('Erro ao carregar dados do cliente', 'error');
+            }
+        }
+
+        async function loadManagerStats() {
+            try {
+                const response = await fetch(`${API_BASE}/manager.php?action=stats`);
+                const data = await response.json();
+
+                document.getElementById('totalClients').textContent = data.total_clients || 0;
+                document.getElementById('totalAccountsManager').textContent = data.total_accounts || 0;
+                document.getElementById('totalVolumeManager').textContent =
+                    `R$ ${parseFloat(data.total_value || 0).toFixed(2).replace('.', ',')}`;
+                document.getElementById('totalFeedbacksManager').textContent = data.total_feedbacks || 0;
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+            }
+        }
+
+        async function loadManagerClients() {
+            try {
+                const response = await fetch(`${API_BASE}/manager.php?action=clients`);
+                const data = await response.json();
+                const clients = data.clients || [];
+
+                const tbody = document.getElementById('clientsTableBody');
+                tbody.innerHTML = '';
+
+                if (clients.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum cliente cadastrado ainda</td></tr>';
+                    return;
+                }
+
+                clients.forEach(client => {
+                    const value = parseFloat(client.total_value || 0).toFixed(2).replace('.', ',');
+                    const lastActivity = client.last_activity ? new Date(client.last_activity).toLocaleDateString() : 'Nunca';
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${client.name}</td>
+                            <td>${client.email}</td>
+                            <td>R$ ${value}</td>
+                            <td>${lastActivity}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="viewClientDetails(${client.id}, '${client.name}')">
+                                    Ver Detalhes
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error('Erro ao carregar clientes:', error);
+                showAlert('Erro ao carregar lista de clientes', 'error');
+            }
+        }
+
+        async function viewClientDetails(clientId, clientName) {
+            document.getElementById('managerDashboard').style.display = 'none';
+            document.getElementById('clientDetailsPage').style.display = 'block';
+            document.getElementById('clientDetailsName').textContent = clientName;
+            // Atualiza todos os campos hidden relacionados ao clientId
+            setCurrentClientIdForForms(clientId);
+
+            try {
+                const [accountsResponse, feedbacksResponse] = await Promise.all([
+                    fetch(`${API_BASE}/manager.php?action=client-accounts&client_id=${clientId}`),
+                    fetch(`${API_BASE}/feedbacks.php?client_id=${clientId}`)
+                ]);
+
+                const accountsData = await accountsResponse.json();
+                const feedbacksData = await feedbacksResponse.json();
+
+                // Update stats
+                document.getElementById('clientTotalAccounts').textContent = accountsData.total_accounts || 0;
+                document.getElementById('clientTotalVolume').textContent =
+                    `R$ ${parseFloat(accountsData.total_value || 0).toFixed(2).replace('.', ',')}`;
+                document.getElementById('clientMainCategory').textContent = accountsData.main_category || '-';
+                document.getElementById('clientTotalFeedbacks').textContent = feedbacksData.feedbacks?.length || 0;
+
+                // Load accounts table
+                const tbody = document.getElementById('clientAccountsTableBody');
+                tbody.innerHTML = '';
+
+                if (accountsData.accounts?.length > 0) {
+                    accountsData.accounts.forEach(account => {
+                        const value = parseFloat(account.value || 0).toFixed(2).replace('.', ',');
+                        const date = new Date(account.date).toLocaleDateString();
+
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${date}</td>
+                                <td>${account.category_name}</td>
+                                <td>R$ ${value}</td>
+                                <td>${account.description || '-'}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center">Nenhuma despesa registrada</td></tr>';
+                }
+
+                // Load feedbacks
+                const feedbacksList = document.getElementById('clientFeedbacksList');
+                feedbacksList.innerHTML = '';
+
+                if (feedbacksData.feedbacks?.length > 0) {
+                    feedbacksData.feedbacks.forEach(feedback => {
+                        const date = new Date(feedback.created_at).toLocaleDateString();
+                        feedbacksList.innerHTML += `
+                            <div class="feedback-card">
+                                <div class="feedback-header">
+                                    <span class="feedback-date">${date}</span>
+                                </div>
+                                <p class="feedback-message">${feedback.message}</p>
+                            </div>
+                        `;
+                    });
+                } else {
+                    feedbacksList.innerHTML = '<div class="empty-state">Nenhum feedback enviado ainda</div>';
+                }
+
+            } catch (error) {
+                console.error('Erro ao carregar detalhes do cliente:', error);
+                showAlert('Erro ao carregar detalhes do cliente', 'error');
+            }
+        }
+
+        function backToManagerDashboard() {
+            document.getElementById('managerDashboard').style.display = 'block';
+            document.getElementById('clientDetailsPage').style.display = 'none';
+        }
+
+        async function viewClientDetails(clientId) {
+            try {
+                const response = await fetch(`${API_BASE}/manager.php?action=client-details&client_id=${clientId}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showAlert(data.error || 'Erro ao carregar detalhes', 'error');
+                    return;
+                }
+
+                const client = data.client;
+                const accounts = data.accounts || [];
+                const stats = data.stats;
+                const byCategory = data.by_category || [];
+
+                document.getElementById('clientDetailsName').textContent = client.name;
+
+                let html = `
+                    <div class="stats-grid" style="margin-bottom: 30px;">
+                        <div class="stat-card">
+                            <div class="stat-label">Total de despesas</div>
+                            <div class="stat-value">${stats.total_accounts || 0}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Volume total</div>
+                            <div class="stat-value">R$ ${parseFloat(stats.total_value || 0).toFixed(2).replace('.', ',')}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Média por despesa</div>
+                            <div class="stat-value">R$ ${parseFloat(stats.avg_value || 0).toFixed(2).replace('.', ',')}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Maior despesa</div>
+                            <div class="stat-value">R$ ${parseFloat(stats.max_value || 0).toFixed(2).replace('.', ',')}</div>
+                        </div>
+                    </div>
+                `;
+
+                if (byCategory.length > 0) {
+                    html += '<h3 style="font-size: 21px; font-weight: 600; margin-bottom: 16px;">Gastos por Categoria</h3>';
+                    html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 30px;">';
+                    byCategory.forEach(cat => {
+                        const value = parseFloat(cat.total).toFixed(2).replace('.', ',');
+                        html += `
+                            <div style="padding: 16px; background: var(--bg-secondary); border-radius: var(--radius-sm);">
+                                <div style="font-size: 24px; margin-bottom: 8px;">${cat.icon}</div>
+                                <div style="font-size: 13px; color: var(--text-secondary);">${cat.name}</div>
+                                <div style="font-size: 19px; font-weight: 600;">R$ ${value}</div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="font-size: 21px; font-weight: 600;">Últimas Despesas</h3>
+                        <button class="btn btn-primary btn-sm" onclick="showFeedbackModal(${clientId}, '${client.name}')">Enviar Feedback</button>
+                    </div>
+                `;
+
+                if (accounts.length > 0) {
+                    html += '<div class="table-container"><table><thead><tr><th>Data</th><th>Categoria</th><th>Descrição</th><th>Valor</th></tr></thead><tbody>';
+                    accounts.forEach(acc => {
+                        const date = new Date(acc.date).toLocaleDateString('pt-BR');
+                        const value = parseFloat(acc.value).toFixed(2).replace('.', ',');
+                        html += `
+                            <tr>
+                                <td>${date}</td>
+                                <td>${acc.category_icon} ${acc.category_name}</td>
+                                <td>${acc.description || '—'}</td>
+                                <td><strong>R$ ${value}</strong></td>
+                            </tr>
+                        `;
+                    });
+                    html += '</tbody></table></div>';
+                } else {
+                    html += '<div class="empty-state"><p>Nenhuma despesa registrada</p></div>';
+                }
+
+                document.getElementById('clientDetailsContent').innerHTML = html;
+                document.getElementById('clientDetailsModal').classList.add('active');
+            } catch (error) {
+                showAlert('Erro ao carregar detalhes do cliente', 'error');
+            }
+        }
+
+        function showFeedbackModal(userId, userName) {
+            document.getElementById('feedbackUserId').value = userId;
+            document.getElementById('feedbackClientName').value = userName;
+            // Garantir que todos os campos hidden usados pelos vários formulários sejam atualizados
+            setCurrentClientIdForForms(userId);
+            closeModal();
+            document.getElementById('feedbackModal').classList.add('active');
+        }
+
+        // Define o clientId em todos os hidden fields usados pelos formulários de feedback
+        function setCurrentClientIdForForms(clientId) {
+            const ids = ['currentClientId','currentClientId1','currentClientId2','feedbackUserId'];
+            ids.forEach(id => {
+                try {
+                    const el = document.getElementById(id);
+                    if (el) el.value = clientId;
+                } catch (e) {
+                    // ignore
+                }
+            });
+        }
+
+        async function handleSendFeedback(e) {
+            e.preventDefault();
+            // Suporta vários formulários de feedback: identifica o form e os campos dentro dele
+            let form = e.target;
+            if (!(form instanceof HTMLFormElement)) {
+                form = e.target.closest('form') || document;
+            }
+
+            // Procura por um input hidden com id ou name que contenha o user id
+            // Suporta múltiplos hidden fields que podem existir com diferentes ids
+            let userIdEl = form.querySelector('#currentClientId') || form.querySelector('#currentClientId1') || form.querySelector('#currentClientId2') || form.querySelector('#feedbackUserId') || document.getElementById('currentClientId') || document.getElementById('currentClientId1') || document.getElementById('currentClientId2') || document.getElementById('feedbackUserId');
+            let userId = userIdEl ? (userIdEl.value || userIdEl.getAttribute('value')) : null;
+
+            // Procura por textarea dentro do form
+            let textarea = form.querySelector('textarea') || document.querySelector('#feedbackMessage') || document.querySelector('#feedbackMessage1') || document.querySelector('#feedbackMessage2') || document.querySelector('#feedbackMessage3');
+            const message = textarea ? textarea.value.trim() : '';
+
+            if (!userId || !message) {
+                showAlert('Digite uma mensagem e selecione um cliente para enviar o feedback', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/feedbacks.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, message })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (form instanceof HTMLFormElement) form.reset();
+                    showAlert('Feedback enviado com sucesso!', 'success');
+                    // Atualiza a visualização dos detalhes do cliente caso esteja na página de detalhes
+                    if (typeof viewClientDetails === 'function' && document.getElementById('clientDetailsName')) {
+                        const clientIdForView = userId;
+                        const clientName = document.getElementById('clientDetailsName').textContent || '';
+                        viewClientDetails(clientIdForView);
+                    }
+                    // Fecha modal de feedback se estiver aberta
+                    closeModal();
+                } else {
+                    showAlert(data.error || 'Erro ao enviar feedback', 'error');
+                }
+            } catch (error) {
+                console.error('Erro enviar feedback:', error);
+                showAlert('Erro ao conectar com o servidor', 'error');
+            }
+        }
+
+        // Initialize
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${API_BASE}/auth.php?action=check`);
+                const data = await response.json();
+                if (data.authenticated && data.user) {
+                    currentUser = data.user;
+                    await loadCategories();
+                    showDashboard();
+                } else {
+                    document.getElementById('landing').style.display = 'block';
+                    document.getElementById('userDashboard').style.display = 'none';
+                    document.getElementById('managerDashboard').style.display = 'none';
+                }
+            } catch (error) {
+                document.getElementById('landing').style.display = 'block';
+            }
+        }
+        loadCategories();
+    </script>
 </body>
+
 </html>
